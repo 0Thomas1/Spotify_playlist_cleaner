@@ -2,7 +2,7 @@
 .env
 
 # node modules
-.node_modules
+/node_modules
  
 # Operating System files
 .DS_Store
