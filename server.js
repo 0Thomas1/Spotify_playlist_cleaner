@@ -33,13 +33,12 @@ app.get("/fetchUser", async (req, res) => {
   res.send(result);
 });
 
-app.put("/playSong", async (req, res) => {
+app.get("/playSong", async (req, res) => {
   let query = req.query;
   console.log("Query Parameters:", query);
   let token = query.access_token || req.headers.authorization?.split(" ")[1];
   let songId = query.songId;
-  console.log("Access Token:", token);
-  console.log("Song ID:", songId);
+
 
   let result = await fetch(`https://api.spotify.com/v1/me/player/play`, {
     method: "PUT",

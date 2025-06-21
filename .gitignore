@@ -6,7 +6,9 @@
  
 # Operating System files
 .DS_Store
+
 # Logs
 logs
+
 # Build output
 dist

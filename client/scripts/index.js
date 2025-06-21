@@ -55,7 +55,7 @@
       removeBtn.classList.add("btn", "btn-danger");
       removeBtn.textContent = "Remove";
       removeBtn.onclick = async () => {
-        await fetch(
+        const res = await fetch(
           "/removeSong?access_token=" +
             access_token +
             "&songId=" +
@@ -77,18 +77,20 @@
       playBtn.classList.add("btn", "btn-success");
       playBtn.textContent = "Play";
       playBtn.onclick = async () => {
-        await fetch(
+        let res = await fetch(
           "/playSong?access_token=" +
             access_token +
             "&songId=" +
             song.track.uri,
           {
-            method: "PUT",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
+        res = await res.json();
+        console.log("Play response:", res);
       };
 
       btnsDiv.appendChild(playBtn);
