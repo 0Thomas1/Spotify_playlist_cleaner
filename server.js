@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
-const redirect_uri = "http://localhost:" + PORT + "/callback";
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 const stateKey = "spotify_auth_state";
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -39,7 +39,6 @@ app.get("/playSong", async (req, res) => {
   let token = query.access_token || req.headers.authorization?.split(" ")[1];
   let songId = query.songId;
 
-
   let result = await fetch(`https://api.spotify.com/v1/me/player/play`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
@@ -63,7 +62,7 @@ app.get("/fetchSongs", async (req, res) => {
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
   result = await result.json();
   res.send(result);
@@ -85,7 +84,7 @@ app.delete("/removeSong", async (req, res) => {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify({ tracks: [{ uri: songId }] }),
-    }
+    },
   );
 
   if (result.error) {
@@ -112,6 +111,8 @@ app.get("/login", (req, res) => {
   let state = generateRandomString(16);
   res.cookie(stateKey, state);
 
+  console.info(redirect_uri);
+
   // your application requests authorization
   let scope =
     "user-read-private user-read-email user-modify-playback-state playlist-modify-private playlist-modify-public";
@@ -123,7 +124,7 @@ app.get("/login", (req, res) => {
         scope: scope,
         redirect_uri: redirect_uri,
         state: state,
-      })
+      }),
   );
 });
 app.get("/", (req, res) => {});
@@ -141,7 +142,7 @@ app.get("/callback", function (req, res) {
       "/#" +
         querystring.stringify({
           error: "state_mismatch",
-        })
+        }),
     );
   } else {
     res.clearCookie(stateKey);
@@ -182,14 +183,14 @@ app.get("/callback", function (req, res) {
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token,
-            })
+            }),
         );
       } else {
         res.redirect(
           "/#" +
             querystring.stringify({
               error: "invalid_token",
-            })
+            }),
         );
       }
     });
